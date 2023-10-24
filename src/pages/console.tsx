@@ -5,6 +5,7 @@ import { mockedListings } from "@/utils/mockedData";
 import TransferModal from "@/components/TransferModal";
 import FreezeUnfreezeModal from "@/components/FreezeUnfreezeModal";
 import CreateListingModal from "@/components/CreateListingModal";
+import EditListingModal from "@/components/EditListingModal"; // import the EditListingModal
 import { Listing } from "@/utils/listing";
 
 const Console = () => {
@@ -29,12 +30,6 @@ const Console = () => {
           onClick={() => handleButtonClick("createListing")}
         >
           Create Listing
-        </button>
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded-xl mb-5"
-          onClick={() => handleButtonClick("editListing")}
-        >
-          Edit Listing
         </button>
       </div>
       <div className="container mx-auto grid gap-4">
@@ -62,6 +57,15 @@ const Console = () => {
             </div>
 
             <div className="space-x-2">
+              {/* Edit Listing Button for each card */}
+              <button
+                onClick={() =>
+                  handleButtonClick("editListing", listing as Listing)
+                }
+                className="text-xs bg-yellow-400 p-2 rounded-full hover:bg-yellow-500"
+              >
+                Edit
+              </button>
               <button
                 onClick={() =>
                   handleButtonClick("forceTransfer", listing as Listing)
@@ -108,6 +112,12 @@ const Console = () => {
       <CreateListingModal
         isOpen={showModal && currentModal === "createListing"}
         onClose={() => setShowModal(false)}
+      />
+
+      <EditListingModal
+        isOpen={showModal && currentModal === "editListing"}
+        onClose={() => setShowModal(false)}
+        listing={currentListing}
       />
     </div>
   );
