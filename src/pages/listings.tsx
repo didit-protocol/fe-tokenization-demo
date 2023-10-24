@@ -2,7 +2,7 @@
 
 import Head from "next/head";
 import { useState, useEffect, FC } from "react";
-import ListingCardSale from "./components/ListingCardSale";
+import ListingCardSale from "../components/ListingCardSale";
 
 interface Listing {
   contract_address: string;

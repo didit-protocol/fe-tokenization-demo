@@ -4,7 +4,7 @@ import Image from "next/image";
 import ProgressBar from "./ProgressBar";
 
 interface ListingProps {
-  listing: Listing;
+  listing: any;
   showProgress: boolean;
 }
 
