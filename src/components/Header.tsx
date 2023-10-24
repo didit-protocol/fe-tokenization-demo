@@ -89,11 +89,9 @@ const Header = () => {
                 </span>
               </Link>
               {isAdmin && (
-                <Link href="/admin-console" passHref>
+                <Link href="/console" passHref>
                   <span
-                    className={`${linkStyles(
-                      "/admin-console"
-                    )} block px-5 py-3`}
+                    className={`${linkStyles("/console")} block px-5 py-3`}
                     onClick={handleLinkClick}
                   >
                     Console
