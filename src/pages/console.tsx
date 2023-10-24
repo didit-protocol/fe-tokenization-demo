@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import Image from "next/image";
-import StatusCard from "@/components/StatusCard";
 import { mockedListings } from "@/utils/mockedData";
 import TransferModal from "@/components/TransferModal";
 import FreezeUnfreezeModal from "@/components/FreezeUnfreezeModal";
 import CreateListingModal from "@/components/CreateListingModal";
-import EditListingModal from "@/components/EditListingModal"; // import the EditListingModal
+import EditListingModal from "@/components/EditListingModal";
+import ListingCard from "@/components/ListingCardConsole";
 import { Listing } from "@/utils/listing";
 
 const Console = () => {
@@ -34,62 +33,11 @@ const Console = () => {
       </div>
       <div className="container mx-auto grid gap-4">
         {mockedListings.map((listing) => (
-          <div
+          <ListingCard
             key={listing.contract_address}
-            className="bg-white p-3 rounded-xl shadow-md flex items-center transition-shadow hover:shadow-lg border-2 border-gray-200"
-          >
-            <div className="w-24 h-24 relative mr-4">
-              <Image
-                src={listing.portrait_image}
-                alt={listing.name}
-                layout="fill"
-                objectFit="cover"
-                className="rounded-md"
-              />
-            </div>
-
-            <div className="flex-grow">
-              <h2 className="text-lg font-medium truncate">{listing.name}</h2>
-              <p className="text-xs text-gray-600">
-                {listing.contract_address}
-              </p>
-              <StatusCard status={listing.status} />
-            </div>
-
-            <div className="space-x-2">
-              {/* Edit Listing Button for each card */}
-              <button
-                onClick={() =>
-                  handleButtonClick("editListing", listing as Listing)
-                }
-                className="text-xs bg-yellow-400 p-2 rounded-full hover:bg-yellow-500"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() =>
-                  handleButtonClick("forceTransfer", listing as Listing)
-                }
-                className="text-xs bg-blue-400 p-2 rounded-full hover:bg-blue-500"
-              >
-                <Image src="/send.png" width={12} height={12} alt="Send" />
-              </button>
-              <button
-                onClick={() => handleButtonClick("freeze", listing as Listing)}
-                className="text-xs bg-red-400 p-2 rounded-full hover:bg-red-500"
-              >
-                ❄️
-              </button>
-              <button
-                onClick={() =>
-                  handleButtonClick("unfreeze", listing as Listing)
-                }
-                className="text-xs bg-green-400 p-2 rounded-full hover:bg-green-500"
-              >
-                🍃
-              </button>
-            </div>
-          </div>
+            listing={listing as Listing}
+            handleButtonClick={handleButtonClick}
+          />
         ))}
       </div>
 

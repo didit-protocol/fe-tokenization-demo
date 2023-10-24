@@ -1,7 +1,8 @@
 // FreezeUnfreezeModal.js
 import React, { useState } from "react";
 import Modal from "../components/Modal";
-import Image from "next/image";
+import InputAddress from "./InputAddress";
+import ListingCardModal from "./ListingCardModal";
 
 interface FreezeUnfreezeModalProps {
   isOpen: boolean;
@@ -27,38 +28,26 @@ const FreezeUnfreezeModal = ({
       onClose={onClose}
       title={action === "freeze" ? "Freeze Asset" : "Unfreeze Asset"}
     >
-      <div className="flex flex-col space-y-4">
-        <div className="flex items-center space-x-4">
-          <div className="w-16 h-16 relative">
-            <Image
-              src={listing?.portrait_image}
-              alt={listing?.name}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-md"
-            />
-          </div>
-          <div>
-            <h3 className="text-lg font-medium">{listing?.name}</h3>
-            <p className="text-xs text-gray-600">{listing?.contract_address}</p>
-          </div>
+      <div className="p-4 bg-white rounded-md shadow-lg space-y-4 flex flex-col">
+        <div className="border-b pb-2">
+          <ListingCardModal listing={listing} />
         </div>
-        <p>
+        <p className="font-medium text-gray-700 mb-2">
           {action === "freeze"
             ? "Freeze the asset using the details below:"
             : "Unfreeze the asset using the details below:"}
         </p>
-
-        <input
-          className="border p-2 rounded"
-          type="text"
-          placeholder="Address"
-          value={freezeData.address}
-          onChange={(e) =>
-            setFreezeData({ ...freezeData, address: e.target.value })
-          }
-        />
-        <button className="bg-blue-500 text-white px-4 py-2 rounded">
+        <div className="space-y-1">
+          <label className="text-md text-gray-700 font-semibold block mb-1">
+            Address:
+          </label>
+          <InputAddress
+            value={freezeData.address}
+            onChange={(val) => setFreezeData({ ...freezeData, address: val })}
+            placeholder="Enter address"
+          />
+        </div>
+        <button className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-3">
           {action === "freeze" ? "Freeze" : "Unfreeze"}
         </button>
       </div>
