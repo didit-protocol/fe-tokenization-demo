@@ -2,8 +2,8 @@ import Image from "next/image";
 import React from "react";
 import Link from "next/link";
 import { FaFacebookF, FaTwitter, FaLinkedinIn } from "react-icons/fa";
-import CalltoActionButton from "./components/CalltoActionButton";
-import ContactForm from "./components/ContactForm";
+import CalltoActionButton from "../components/CalltoActionButton";
+import ContactForm from "../components/ContactForm";
 
 const LandingPage = () => {
   return (

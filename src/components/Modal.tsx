@@ -37,7 +37,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
         ref={modalRef}
         className="bg-white p-5 rounded shadow-lg max-w-md w-full relative z-10"
       >
-        {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
+        {title && <h2 className="text-xl font-semibold">{title}</h2>}
         <button
           onClick={onClose}
           className="absolute top-2 right-2 text-gray-700 hover:text-gray-900"
