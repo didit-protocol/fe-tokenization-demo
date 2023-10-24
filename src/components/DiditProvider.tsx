@@ -43,14 +43,7 @@ const DiditProviderComponent = ({
             <DiditAuthProvider
               chains={chains}
               modalSize="compact"
-              theme={lightTheme({
-                accentColor:
-                  "linear-gradient(30deg, #0E8AAA -20%, #FF4ECD -10%, #0072F5 90%)",
-                accentColorForeground: "white",
-                borderRadius: "large",
-                fontStack: "system",
-                overlayBlur: "large",
-              })}
+              theme={lightTheme()}
             >
               {children}
             </DiditAuthProvider>
