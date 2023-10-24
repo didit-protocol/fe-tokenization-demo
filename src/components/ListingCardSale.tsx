@@ -2,6 +2,7 @@
 import React, { FC } from "react";
 import Image from "next/image";
 import ProgressBar from "./ProgressBar";
+import StatusCard from "./StatusCard";
 
 interface ListingProps {
   listing: any;
@@ -13,9 +14,7 @@ const ListingCardSale: FC<ListingProps> = ({ listing, showProgress }) => (
     key={listing.contract_address}
     className="bg-white p-6 rounded-xl shadow-lg transition-transform transform hover:scale-105 relative"
   >
-    <span className="absolute top-4 right-4 text-xs font-bold py-1 px-3 rounded-full bg-green-500 text-white z-10">
-      {listing.status}
-    </span>
+    <StatusCard status={listing.status} absolute={true} />
 
     <div className="relative h-48 w-full mb-4 rounded-md overflow-hidden">
       <Image
