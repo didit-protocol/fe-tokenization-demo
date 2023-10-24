@@ -285,7 +285,10 @@ const LandingPage = () => {
               >
                 <FaTwitter />
               </Link>
-              <Link href="/#" className="text-gray-400 hover:text-gray-300 mr-5">
+              <Link
+                href="/#"
+                className="text-gray-400 hover:text-gray-300 mr-5"
+              >
                 <FaLinkedinIn />
               </Link>
             </div>
