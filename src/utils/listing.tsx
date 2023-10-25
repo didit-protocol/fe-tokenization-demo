@@ -2,9 +2,9 @@ export interface Listing {
   contract_address: string;
   name: string;
   description: string;
-  portrait_image: string;
+  portrait_image: string | null | File;
   markdown: string;
-  images: string[];
+  images: string[] | null | File[];
   total_tokens: number;
   initial_sale_tokens: number;
   initial_value_per_token: number;

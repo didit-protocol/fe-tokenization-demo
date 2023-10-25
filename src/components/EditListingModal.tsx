@@ -1,57 +1,49 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import Modal from "../components/Modal";
-import InputAddress from "./InputAddress";
 import Image from "next/image";
-import { toast } from "react-toastify";
-import { createListing } from "@/services/listingService";
-import { useToken } from "@/contexts/TokenProvider";
 import { Listing } from "@/utils/listing";
+import { toast } from "react-toastify";
+import { useToken } from "@/contexts/TokenProvider";
+import { editListing, deleteListing } from "@/services/listingService";
 
 interface CreateListingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  listing: Listing | null;
 }
 
-const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
+const isFile = (image: string | File): image is File => {
+  return (image as File).name !== undefined;
+};
+
+const EditListingModal = ({
+  isOpen,
+  onClose,
+  listing,
+}: CreateListingModalProps) => {
   const { internalToken } = useToken();
 
-  const handleCreateListing = async () => {
-    try {
-      // Assuming you have access_token in some state or from context
-      const response = await createListing(
-        internalToken as string,
-        listingData,
-        {
-          portrait: listingData.portrait_image as File,
-          images: listingData.images as File[],
-        }
-      );
-
-      if (response && response.status == 200) {
-        toast.success("Listing created successfully");
-        onClose(); // Close modal after successful creation
-      } else {
-        toast.error("Listing creation failed");
-      }
-    } catch (error) {
-      toast.error("An error occurred while creating the listing");
-    }
-  };
-
   const [listingData, setListingData] = useState<Listing>({
-    contract_address: "",
-    name: "",
-    description: "",
-    portrait_image: null,
-    markdown: "",
-    images: [],
-    total_tokens: 0,
-    initial_sale_tokens: 0,
-    initial_value_per_token: 0,
-    end_time_sale: 1698253385,
-    tokens_sold: 0,
-    status: "Sale",
+    contract_address: listing?.contract_address || "",
+    name: listing?.name || "",
+    description: listing?.description || "",
+    portrait_image: listing?.portrait_image || "",
+    markdown: listing?.markdown || "",
+    images: listing?.images || [],
+    total_tokens: listing?.total_tokens || 0,
+    initial_sale_tokens: listing?.initial_sale_tokens || 0,
+    initial_value_per_token: listing?.initial_value_per_token || 0,
+    end_time_sale: listing?.end_time_sale || 0,
+    tokens_sold: listing?.tokens_sold || 0,
+    status: listing?.status || "Sale",
   });
+
+  const renderImage = (image: string | File) => {
+    if (isFile(image)) {
+      return URL.createObjectURL(image);
+    }
+    return image;
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setListingData((prevState) => ({ ...prevState, [field]: value }));
@@ -80,11 +72,51 @@ const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
     }
   };
 
+  const handleEditListing = async () => {
+    try {
+      const response = await editListing(
+        internalToken as string,
+        listingData.contract_address,
+        listingData
+      );
+
+      if (response && response.status == 200) {
+        toast.success("Listing edited successfully");
+        onClose();
+      } else {
+        toast.error("Editing listing failed");
+      }
+    } catch (error) {
+      toast.error("An error occurred while editing the listing");
+    }
+  };
+
+  const handleDeleteListing = async () => {
+    if (!window.confirm("Are you sure you want to delete this listing?"))
+      return; // Confirmation before deleting
+
+    try {
+      const response = await deleteListing(
+        internalToken as string,
+        listingData.contract_address
+      );
+
+      if (response && response.status == 200) {
+        toast.success("Listing deleted successfully");
+        onClose();
+      } else {
+        toast.error("Deleting listing failed");
+      }
+    } catch (error) {
+      toast.error("An error occurred while deleting the listing");
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Create Listing"
+      title="Edit Listing"
       className="w-full max-w-6xl mx-4"
     >
       {" "}
@@ -136,7 +168,7 @@ const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
           {listingData.portrait_image && (
             <div className="mt-4 relative w-24 h-24 rounded">
               <Image
-                src={URL.createObjectURL(listingData.portrait_image as File)}
+                src={renderImage(listingData.portrait_image)}
                 alt="Uploaded Portrait"
                 width={96}
                 height={96}
@@ -173,7 +205,7 @@ const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
               listingData.images.map((image, index) => (
                 <div key={index} className="relative w-24 h-24 rounded mr-4">
                   <Image
-                    src={URL.createObjectURL(image as File)}
+                    src={renderImage(image)}
                     alt="Uploaded Image"
                     width={96}
                     height={96}
@@ -182,7 +214,7 @@ const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
                   <button
                     className="absolute top-0 right-0 bg-red-600 text-white rounded-fullw-6 h-6 flex items-center justify-center"
                     onClick={() => {
-                      const updatedImages = [...(listingData.images as File[])];
+                      const updatedImages = [...(listingData.images as File[])]; // Handle null with a fallback value of []
                       updatedImages.splice(index, 1);
                       setListingData((prev) => ({
                         ...prev,
@@ -211,69 +243,7 @@ const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
           />
         </div>
 
-        <div className="w-full px-2 mb-4">
-          <label className="block text-gray-600 mb-2">
-            Contract Address <span className="text-red-500">*</span>
-          </label>
-          <InputAddress
-            value={listingData.contract_address}
-            onChange={(val) =>
-              setListingData({ ...listingData, contract_address: val })
-            }
-            placeholder="0x... (Ethereum Contract Address)"
-          />
-        </div>
-
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Total Tokens Input */}
-            <div>
-              <label className="block text-gray-600 mb-2">Total Tokens</label>
-              <input
-                className="border w-full p-2 rounded shadow-sm"
-                type="text"
-                placeholder="Enter Total Tokens"
-                value={listingData.total_tokens}
-                onChange={(e) =>
-                  handleInputChange("total_tokens", e.target.value)
-                }
-              />
-            </div>
-
-            {/* Initial Sale Tokens Input */}
-            <div>
-              <label className="block text-gray-600 mb-2">
-                Initial Sale Tokens
-              </label>
-              <input
-                className="border w-full p-2 rounded shadow-sm"
-                type="text"
-                placeholder="Enter Initial Sale Tokens"
-                value={listingData.initial_sale_tokens}
-                onChange={(e) =>
-                  handleInputChange("initial_sale_tokens", e.target.value)
-                }
-              />
-            </div>
-
-            {/* Conditional End Time Sale Input */}
-            {listingData.status === "Sale" && (
-              <div className="col-span-full md:col-span-1">
-                <label className="block text-gray-600 mb-2">
-                  End Time Sale <span className="text-red-500">*</span>
-                </label>
-                <input
-                  className="border w-full p-2 rounded shadow-sm"
-                  type="datetime-local"
-                  value={listingData.end_time_sale}
-                  onChange={(e) =>
-                    handleInputChange("end_time_sale", e.target.value)
-                  }
-                />
-              </div>
-            )}
-          </div>
-
           {/* Status Dropdown */}
           <div className="mt-4">
             <label className="text-gray-600 font-medium block mb-2">
@@ -294,9 +264,15 @@ const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
         <div className="mt-6">
           <button
             className="w-full bg-blue-500 text-white py-3 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            onClick={handleCreateListing}
+            onClick={handleEditListing}
           >
-            Create Listing
+            Edit Listing
+          </button>
+          <button
+            className="w-full bg-red-500 text-white py-3 rounded-lg shadow-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            onClick={handleDeleteListing}
+          >
+            Delete Listing
           </button>
         </div>
       </div>
@@ -304,4 +280,4 @@ const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
   );
 };
 
-export default CreateListingModal;
+export default EditListingModal;

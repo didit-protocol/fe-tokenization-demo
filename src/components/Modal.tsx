@@ -5,9 +5,16 @@ interface ModalProps {
   onClose: () => void;
   title?: string;
   children: React.ReactNode;
+  className?: string;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  title,
+  children,
+  className,
+}) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Close modal when clicking outside the content
@@ -30,9 +37,12 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black opacity-70"></div>
+
       <div
         ref={modalRef}
-        className="bg-white p-5 rounded shadow-lg max-w-md w-full relative"
+        className={`bg-white p-5 rounded shadow-lg max-w-md w-full max-h-[80vh] overflow-y-auto relative z-10 ${className}`}
       >
         {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
         <button
