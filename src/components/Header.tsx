@@ -29,7 +29,7 @@ const Header = () => {
         <div className="flex items-center space-x-3">
           <Image src="/logo.png" alt="LIQUID Logo" width={40} height={40} />
           <Link href="/" passHref>
-            <span className="text-xl font-semibold text-gray-800 hover:text-gray-600 transition-colors cursor-pointer">
+             <span className="text-xl font-semibold text-gray-800 hover:text-gray-600 transition-colors cursor-pointer">
               LIQUID
             </span>
           </Link>
