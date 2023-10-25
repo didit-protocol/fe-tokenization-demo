@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Listing } from "@/utils/listing";
 import { toast } from "react-toastify";
 import { useToken } from "@/contexts/TokenProvider";
-import { editListing } from "@/services/listingService";
+import { editListing, deleteListing } from "@/services/listingService";
 
 interface CreateListingModalProps {
   isOpen: boolean;
@@ -82,12 +82,33 @@ const EditListingModal = ({
 
       if (response && response.status == 200) {
         toast.success("Listing edited successfully");
-        onClose(); // Close modal after successful edit
+        onClose();
       } else {
         toast.error("Editing listing failed");
       }
     } catch (error) {
       toast.error("An error occurred while editing the listing");
+    }
+  };
+
+  const handleDeleteListing = async () => {
+    if (!window.confirm("Are you sure you want to delete this listing?"))
+      return; // Confirmation before deleting
+
+    try {
+      const response = await deleteListing(
+        internalToken as string,
+        listingData.contract_address
+      );
+
+      if (response && response.status == 200) {
+        toast.success("Listing deleted successfully");
+        onClose();
+      } else {
+        toast.error("Deleting listing failed");
+      }
+    } catch (error) {
+      toast.error("An error occurred while deleting the listing");
     }
   };
 
@@ -246,6 +267,12 @@ const EditListingModal = ({
             onClick={handleEditListing}
           >
             Edit Listing
+          </button>
+          <button
+            className="w-full bg-red-500 text-white py-3 rounded-lg shadow-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            onClick={handleDeleteListing}
+          >
+            Delete Listing
           </button>
         </div>
       </div>

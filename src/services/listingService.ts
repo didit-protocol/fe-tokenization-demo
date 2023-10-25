@@ -122,3 +122,30 @@ export const editListing = async (
     return null;
   }
 };
+
+export const deleteListing = async (
+  accessToken: string,
+  contractAddress: string
+): Promise<any> => {
+  const endpoint = `${TOKENIZATION_BASE_URL}/platform/listings/${contractAddress}/`;
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+  };
+
+  try {
+    const response = await fetch(endpoint, {
+      method: "DELETE",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const responseData: Listing = await response.json();
+    return responseData;
+  } catch (error) {
+    console.error("Error deleting listing:", error);
+    return null;
+  }
+};
