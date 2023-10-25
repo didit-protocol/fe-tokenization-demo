@@ -23,7 +23,7 @@ const InputAddress: React.FC<InputAddressProps> = ({
       setIsValid(true);
       setIsDisabled(true); // disable the input
     }
-  }, [address]);
+  }, [address, onChange]);
 
   useEffect(() => {
     if (value === "") {

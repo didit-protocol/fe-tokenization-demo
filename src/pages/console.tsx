@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { mockedListings } from "@/utils/mockedData";
 import TransferModal from "@/components/TransferModal";
 import FreezeUnfreezeModal from "@/components/FreezeUnfreezeModal";
@@ -6,11 +6,28 @@ import CreateListingModal from "@/components/CreateListingModal";
 import EditListingModal from "@/components/EditListingModal";
 import ListingCard from "@/components/ListingCardConsole";
 import { Listing } from "@/utils/listing";
+import { useListings } from "@/contexts/ListingProvider";
+import Head from "next/head";
 
 const Console = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [currentModal, setCurrentModal] = useState<string>("");
   const [currentListing, setCurrentListing] = useState<Listing | null>(null);
+  const [listings, setListings] = useState<Listing[]>([]);
+
+  const contextValue = useListings();
+  const getListings = contextValue?.getListings;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (getListings) {
+        const fetchedListings = await getListings();
+        setListings(fetchedListings);
+      }
+    };
+
+    fetchData();
+  }, [getListings]);
 
   const handleButtonClick = (
     action: React.SetStateAction<string>,
@@ -22,17 +39,27 @@ const Console = () => {
   };
 
   return (
-    <div className="p-5 min-h-screen">
-      <div className="flex items-center space-x-4">
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded-xl mb-5"
-          onClick={() => handleButtonClick("createListing")}
-        >
-          Create Listing
-        </button>
+    <div className="p-3 md:p-5 min-h-screen">
+      <Head>
+        <title>Liquid - Console</title>
+        <meta name="description" content="Console page for Liquid" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <div className="container mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-4 md:mb-6">
+          <div className="text-xl md:text-2xl font-semibold mb-3 md:mb-0">
+            Management Console
+          </div>
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium md:font-semibold py-2 px-4 rounded-xl shadow"
+            onClick={() => handleButtonClick("createListing")}
+          >
+            + Create Listing
+          </button>
+        </div>
       </div>
-      <div className="container mx-auto grid gap-4">
-        {mockedListings.map((listing) => (
+      <div className="container mx-auto grid">
+        {listings.map((listing) => (
           <ListingCard
             key={listing.contract_address}
             listing={listing as Listing}
@@ -41,32 +68,41 @@ const Console = () => {
         ))}
       </div>
 
-      <TransferModal
-        isOpen={showModal && currentModal === "forceTransfer"}
-        onClose={() => setShowModal(false)}
-        listing={currentListing}
-      />
+      {showModal && currentModal === "forceTransfer" && (
+        <TransferModal
+          isOpen={showModal && currentModal === "forceTransfer"}
+          onClose={() => setShowModal(false)}
+          listing={currentListing}
+        />
+      )}
 
-      <FreezeUnfreezeModal
-        isOpen={
-          showModal &&
-          (currentModal === "freeze" || currentModal === "unfreeze")
-        }
-        onClose={() => setShowModal(false)}
-        listing={currentListing}
-        action={currentModal} // Either "freeze" or "unfreeze"
-      />
+      {showModal &&
+        (currentModal === "freeze" || currentModal === "unfreeze") && (
+          <FreezeUnfreezeModal
+            isOpen={
+              showModal &&
+              (currentModal === "freeze" || currentModal === "unfreeze")
+            }
+            onClose={() => setShowModal(false)}
+            listing={currentListing}
+            action={currentModal} // Either "freeze" or "unfreeze"
+          />
+        )}
 
-      <CreateListingModal
-        isOpen={showModal && currentModal === "createListing"}
-        onClose={() => setShowModal(false)}
-      />
+      {showModal && currentModal === "createListing" && (
+        <CreateListingModal
+          isOpen={showModal && currentModal === "createListing"}
+          onClose={() => setShowModal(false)}
+        />
+      )}
 
-      <EditListingModal
-        isOpen={showModal && currentModal === "editListing"}
-        onClose={() => setShowModal(false)}
-        listing={currentListing}
-      />
+      {showModal && currentModal === "editListing" && (
+        <EditListingModal
+          isOpen={showModal && currentModal === "editListing"}
+          onClose={() => setShowModal(false)}
+          listing={currentListing}
+        />
+      )}
     </div>
   );
 };

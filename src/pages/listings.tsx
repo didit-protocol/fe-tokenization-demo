@@ -4,31 +4,32 @@ import Head from "next/head";
 import { useState, useEffect, FC } from "react";
 import ListingCardSale from "../components/ListingCardSale";
 import { mockedListings } from "@/utils/mockedData";
-
-interface Listing {
-  contract_address: string;
-  name: string;
-  description: string;
-  portrait_image: string;
-  markdown: string;
-  images: string[];
-  total_tokens: number;
-  initial_sale_tokens: number;
-  initial_value_per_token: number;
-  end_time_sale: number;
-  tokens_sold: number;
-  status: "Sale" | "Tradeable" | "Refund";
-}
+import { Listing } from "@/utils/listing";
+import { useListings } from "@/contexts/ListingProvider";
 
 const Listings: FC = () => {
   const [listings, setListings] = useState<Listing[]>([]);
+  const contextValue = useListings();
+  const getListings = contextValue?.getListings;
+
+  // useEffect(() => {
+  //   // Mock data fetching (replace with your API call)
+  //   const mockedData = mockedListings;
+  //   setListings(mockedListings as []);
+  // }, []);
 
   useEffect(() => {
-    // Mock data fetching (replace with your API call)
-    const mockedData = mockedListings;
+    const fetchData = async () => {
+      if (getListings) {
+        const fetchedListings = await getListings();
+        setListings(fetchedListings);
+      }
+    };
 
-    setListings(mockedListings as []);
-  }, []);
+    fetchData();
+  }, [getListings]);
+
+  console.log(listings);
 
   return (
     <div className="py-6 sm:py-12 min-h-screen">

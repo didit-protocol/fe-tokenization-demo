@@ -1,74 +1,57 @@
 // TransferModal.js
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Modal from "./Modal";
-import Image from "next/image";
+import { useDiditStatus } from "didit-sdk";
+import ListingCardModal from "./ListingCardModal";
+import Toast, { ToastHandles } from "./Toast";
 
-interface TransferModalProps {
+interface ReceiveModalProps {
   isOpen: boolean;
   onClose: () => void;
   listing: any;
 }
 
-const TransferModal = ({ isOpen, onClose, listing }: TransferModalProps) => {
-  const [transferData, setTransferData] = useState({
-    contract_address: listing ? listing.contract_address : "",
-    from: "",
-    to: "",
-    value: "",
-  });
+const ReceiveModal = ({ isOpen, onClose, listing }: ReceiveModalProps) => {
+  const { address } = useDiditStatus();
+
+  const toastRef = useRef<ToastHandles>(null);
+
+  const handleCopyToClipboard = () => {
+    navigator.clipboard.writeText(address || "");
+    toastRef.current?.showToast("Copied to clipboard");
+  };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Transfer Asset">
+    <Modal isOpen={isOpen} onClose={onClose} title="Receive Asset">
       <div className="flex flex-col space-y-4">
-        <div className="flex items-center space-x-4">
-          <div className="w-16 h-16 relative">
-            <Image
-              src={listing?.portrait_image}
-              alt={listing?.name}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-md"
-            />
+        {listing && (
+          <div className="flex items-center justify-between border-b pb-2">
+            <ListingCardModal listing={listing} />
           </div>
-          <div>
-            <h3 className="text-lg font-medium">{listing?.name}</h3>
-            <p className="text-xs text-gray-600">{listing?.contract_address}</p>
-          </div>
-        </div>
-        <p>Fill in the details to transfer the asset:</p>
+        )}
+        <p>Receive Assets by sending this address to the Sender.</p>
         <input
-          className="border p-2 rounded"
-          type="text"
-          placeholder="From"
-          value={transferData.from}
-          onChange={(e) =>
-            setTransferData({ ...transferData, from: e.target.value })
-          }
-        />
-        <input
-          className="border p-2 rounded"
-          type="text"
-          placeholder="To"
-          value={transferData.to}
-          onChange={(e) =>
-            setTransferData({ ...transferData, to: e.target.value })
-          }
-        />
-        <input
-          className="border p-2 rounded"
+          className="border p-2 rounded bg-gray-200 cursor-not-allowed"
           type="text"
           placeholder="Value"
-          value={transferData.value}
-          onChange={(e) =>
-            setTransferData({ ...transferData, value: e.target.value })
-          }
+          value={address}
+          readOnly
+          disabled
         />
-        <button className="bg-blue-500 text-white px-4 py-2 rounded">
-          Transfer
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+          onClick={handleCopyToClipboard}
+        >
+          Copy Address
         </button>
       </div>
+      <Toast
+        ref={toastRef}
+        backgroundColor="bg-green-500"
+        textColor="text-white"
+      />
     </Modal>
   );
 };
 
-export default TransferModal;
+export default ReceiveModal;

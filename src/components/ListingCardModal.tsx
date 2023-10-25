@@ -15,7 +15,7 @@ const ListingCardModal: React.FC<ListingCardProps> = ({ listing }) => {
     >
       <div className="w-24 h-24 relative mr-4">
         <Image
-          src={listing.portrait_image}
+          src={listing.portrait_image as string}
           alt={listing.name}
           layout="fill"
           objectFit="cover"
