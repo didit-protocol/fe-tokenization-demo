@@ -73,7 +73,7 @@ const Dashboard = () => {
           <p className="text-xl text-gray-700">Start your token journey!</p>
           <Link
             href="/listings"
-            className="bg-green-600 text-white py-2 px-8 rounded hover:bg-green-700 transition duration-300"
+            className="bg-blue-600 text-white py-2 px-8 rounded-xl hover:bg-blue-700 transition duration-300"
           >
             Browse Listings!
           </Link>
