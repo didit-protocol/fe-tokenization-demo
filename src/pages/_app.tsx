@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import dynamic from "next/dynamic";
 import MainLayout from "./layouts/MainLayout";
+import { ListingsProvider } from "../contexts/ListingProvider";
 
 const DynamicDiditProviderComponent = dynamic(
   () =>
@@ -15,11 +16,13 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <main>
       <div>
-        <DynamicDiditProviderComponent>
-          <MainLayout>
-            <Component {...pageProps} />
-          </MainLayout>
-        </DynamicDiditProviderComponent>
+        <ListingsProvider>
+          <DynamicDiditProviderComponent>
+            <MainLayout>
+              <Component {...pageProps} />
+            </MainLayout>
+          </DynamicDiditProviderComponent>
+        </ListingsProvider>
       </div>
     </main>
   );
