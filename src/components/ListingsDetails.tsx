@@ -41,7 +41,7 @@ const ListingDetails: React.FC<ListingProps> = ({ listing }) => {
         </div>
 
         <Image
-          src={listing.portrait_image}
+          src={listing.portrait_image as string}
           alt="Listing Portrait"
           width={280}
           height={280}
@@ -49,16 +49,17 @@ const ListingDetails: React.FC<ListingProps> = ({ listing }) => {
         />
         <p className="text-gray-700 mb-6">{listing.description}</p>
         <div className="grid grid-cols-2 gap-4 mb-6">
-          {listing.images.map((image, index) => (
-            <Image
-              key={index}
-              src={image}
-              alt="Listing Image"
-              width={140}
-              height={140}
-              className="rounded-lg hover:shadow-md transition-shadow duration-300"
-            />
-          ))}
+          {listing.images &&
+            listing.images.map((image, index) => (
+              <Image
+                key={index}
+                src={image as string}
+                alt="Listing Image"
+                width={140}
+                height={140}
+                className="rounded-lg hover:shadow-md transition-shadow duration-300"
+              />
+            ))}
         </div>
 
         <div className="mb-6 border-b-2 border-indigo-300 pb-6">

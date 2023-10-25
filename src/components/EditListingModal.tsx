@@ -16,18 +16,6 @@ const isFile = (image: string | File): image is File => {
   return (image as File).name !== undefined;
 };
 
-const convertDataFromTimestamp = (timestamp: number) => {
-  const date = new Date(timestamp);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-
-  return `${year}-${month}-${day}T${hour}:${minute}`;
-};
-
 const EditListingModal = ({
   isOpen,
   onClose,

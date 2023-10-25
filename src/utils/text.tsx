@@ -12,3 +12,15 @@ export const truncateAddress = (address: string) => {
 };
 
 export default truncate;
+
+export const convertDataFromTimestamp = (timestamp: number) => {
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+
+  return `${year}-${month}-${day}T${hour}:${minute}`;
+};

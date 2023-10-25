@@ -19,7 +19,7 @@ const ListingCardSale: FC<ListingProps> = ({ listing, showProgress }) => (
 
     <div className="relative h-48 w-full mb-4 rounded-md overflow-hidden">
       <Image
-        src={listing.portrait_image}
+        src={listing.portrait_image as string}
         alt={listing.name}
         layout="fill"
         objectFit="cover"
