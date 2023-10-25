@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import StatusCard from "@/components/StatusCard";
 import { Listing } from "@/utils/listing";
+import { truncateAddress } from "@/utils/text";
 import Link from "next/link";
 
 interface DetailedListingCardProps {
@@ -25,7 +26,7 @@ const ListingCardDashboard: React.FC<DetailedListingCardProps> = ({
     >
       <div className="w-full md:w-24 h-24 relative mb-3 md:mb-0 md:mr-4">
         <Image
-          src={listing.portrait_image}
+          src={listing.portrait_image as string}
           alt={listing.name}
           layout="fill"
           objectFit="cover"
@@ -38,7 +39,7 @@ const ListingCardDashboard: React.FC<DetailedListingCardProps> = ({
           {listing.name}
         </h2>
         <p className="text-xs md:text-sm text-gray-600 mt-1 truncate">
-          {listing.contract_address}
+          {truncateAddress(listing.contract_address)}
         </p>
         <StatusCard status={listing.status} />
 

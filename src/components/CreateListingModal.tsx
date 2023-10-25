@@ -1,41 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Modal from "../components/Modal";
 import InputAddress from "./InputAddress";
 import Image from "next/image";
+import { toast } from "react-toastify";
+import { createListing } from "@/services/listingService";
+import { useToken } from "@/contexts/TokenProvider";
+import { Listing } from "@/utils/listing";
 
 interface CreateListingModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-type ListingData = {
-  contract_address: string;
-  name: string;
-  description: string;
-  portrait_image: File | null; // <-- Change made here
-  markdown: string;
-  images: File[];
-  total_tokens: string;
-  initial_sale_tokens: string;
-  initial_value_per_token: string;
-  end_time_sale: string;
-  tokens_sold: string;
-  status: string;
-};
-
 const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
-  const [listingData, setListingData] = useState<ListingData>({
+  const { internalToken } = useToken();
+
+  const handleCreateListing = async () => {
+    try {
+      // Assuming you have access_token in some state or from context
+      const response = await createListing(
+        internalToken as string,
+        listingData,
+        {
+          portrait: listingData.portrait_image as File,
+          images: listingData.images as File[],
+        }
+      );
+
+      if (response && response.status == 200) {
+        toast.success("Listing created successfully");
+        onClose(); // Close modal after successful creation
+      } else {
+        toast.error("Listing creation failed");
+      }
+    } catch (error) {
+      toast.error("An error occurred while creating the listing");
+    }
+  };
+
+  const [listingData, setListingData] = useState<Listing>({
     contract_address: "",
     name: "",
     description: "",
     portrait_image: null,
     markdown: "",
     images: [],
-    total_tokens: "",
-    initial_sale_tokens: "",
-    initial_value_per_token: "",
-    end_time_sale: "",
-    tokens_sold: "",
+    total_tokens: 0,
+    initial_sale_tokens: 0,
+    initial_value_per_token: 0,
+    end_time_sale: 1698253385,
+    tokens_sold: 0,
     status: "Sale",
   });
 
@@ -59,8 +73,8 @@ const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
       setListingData((prev) => ({
         ...prev,
         images: [
-          ...prev.images,
-          ...Array.from(files).slice(0, 3 - prev.images.length),
+          ...((prev.images as File[]) || []), // Provide an empty array as fallback
+          ...Array.from(files).slice(0, 3 - (prev.images?.length || 0)), // Handle null with a fallback value of 0
         ],
       }));
     }
@@ -122,7 +136,7 @@ const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
           {listingData.portrait_image && (
             <div className="mt-4 relative w-24 h-24 rounded">
               <Image
-                src={URL.createObjectURL(listingData.portrait_image)}
+                src={URL.createObjectURL(listingData.portrait_image as File)}
                 alt="Uploaded Portrait"
                 width={96}
                 height={96}
@@ -144,7 +158,7 @@ const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
           <label className="block text-gray-600 mb-2">
             Upload Images (max 3) <span className="text-red-500">*</span>
           </label>
-          {listingData.images.length < 3 && (
+          {(listingData.images ? listingData.images.length : 0) < 3 && (
             <input
               type="file"
               accept="image/*"
@@ -155,30 +169,31 @@ const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
           )}
 
           <div className="flex mt-4">
-            {listingData.images.map((image, index) => (
-              <div key={index} className="relative w-24 h-24 rounded mr-4">
-                <Image
-                  src={URL.createObjectURL(image)}
-                  alt="Uploaded Image"
-                  width={96}
-                  height={96}
-                  className="rounded"
-                />
-                <button
-                  className="absolute top-0 right-0 bg-red-600 text-white rounded-fullw-6 h-6 flex items-center justify-center"
-                  onClick={() => {
-                    const updatedImages = [...listingData.images];
-                    updatedImages.splice(index, 1);
-                    setListingData((prev) => ({
-                      ...prev,
-                      images: updatedImages,
-                    }));
-                  }}
-                >
-                  ×
-                </button>
-              </div>
-            ))}
+            {listingData.images &&
+              listingData.images.map((image, index) => (
+                <div key={index} className="relative w-24 h-24 rounded mr-4">
+                  <Image
+                    src={URL.createObjectURL(image as File)}
+                    alt="Uploaded Image"
+                    width={96}
+                    height={96}
+                    className="rounded"
+                  />
+                  <button
+                    className="absolute top-0 right-0 bg-red-600 text-white rounded-fullw-6 h-6 flex items-center justify-center"
+                    onClick={() => {
+                      const updatedImages = [...(listingData.images as File[])];
+                      updatedImages.splice(index, 1);
+                      setListingData((prev) => ({
+                        ...prev,
+                        images: updatedImages,
+                      }));
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
           </div>
         </div>
 
@@ -277,7 +292,10 @@ const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
         </div>
 
         <div className="mt-6">
-          <button className="w-full bg-blue-500 text-white py-3 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          <button
+            className="w-full bg-blue-500 text-white py-3 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            onClick={handleCreateListing}
+          >
             Create Listing
           </button>
         </div>

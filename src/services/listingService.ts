@@ -53,7 +53,7 @@ export const createListing = async (
   accessToken: string,
   data: Listing,
   files: { portrait: File; images: File[] }
-): Promise<Listing | null> => {
+): Promise<any> => {
   const endpoint = `${TOKENIZATION_BASE_URL}/platform/listings/`;
   const headers = {
     Authorization: `Bearer ${accessToken}`,
@@ -97,7 +97,7 @@ export const editListing = async (
   accessToken: string,
   contractAddress: string,
   data: Listing
-): Promise<Listing | null> => {
+): Promise<any> => {
   const endpoint = `${TOKENIZATION_BASE_URL}/platform/listings/${contractAddress}/`;
   const headers = {
     Authorization: `Bearer ${accessToken}`,

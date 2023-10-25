@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { mockedListings } from "@/utils/mockedData";
 import TransferModal from "@/components/TransferModal";
 import FreezeUnfreezeModal from "@/components/FreezeUnfreezeModal";
@@ -6,12 +6,28 @@ import CreateListingModal from "@/components/CreateListingModal";
 import EditListingModal from "@/components/EditListingModal";
 import ListingCard from "@/components/ListingCardConsole";
 import { Listing } from "@/utils/listing";
+import { useListings } from "@/contexts/ListingProvider";
 import Head from "next/head";
 
 const Console = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [currentModal, setCurrentModal] = useState<string>("");
   const [currentListing, setCurrentListing] = useState<Listing | null>(null);
+  const [listings, setListings] = useState<Listing[]>([]);
+
+  const contextValue = useListings();
+  const getListings = contextValue?.getListings;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (getListings) {
+        const fetchedListings = await getListings();
+        setListings(fetchedListings);
+      }
+    };
+
+    fetchData();
+  }, [getListings]);
 
   const handleButtonClick = (
     action: React.SetStateAction<string>,
@@ -42,8 +58,8 @@ const Console = () => {
           </button>
         </div>
       </div>
-      <div className="container mx-auto grid gap-4 md:gap-6">
-        {mockedListings.map((listing) => (
+      <div className="container mx-auto grid">
+        {listings.map((listing) => (
           <ListingCard
             key={listing.contract_address}
             listing={listing as Listing}

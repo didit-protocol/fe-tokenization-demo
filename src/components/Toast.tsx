@@ -7,7 +7,7 @@ interface ToastProps {
 }
 
 export interface ToastHandles {
-  showToast: (msg: string) => void;
+  showToast: (msg: string, bg?: string, text?: string) => void; // Updated the signature to include bg and text
 }
 
 // eslint-disable-next-line react/display-name
@@ -15,13 +15,17 @@ const Toast = React.forwardRef<ToastHandles, ToastProps>(
   (
     {
       initialMessage = "",
-      backgroundColor = "bg-black",
-      textColor = "text-white",
+      backgroundColor: defaultBackgroundColor = "bg-black", // Renamed for clarity
+      textColor: defaultTextColor = "text-white", // Renamed for clarity
     },
     ref
   ) => {
     const [isVisible, setIsVisible] = useState(Boolean(initialMessage));
     const [message, setMessage] = useState(initialMessage);
+    const [backgroundColor, setBackgroundColor] = useState(
+      defaultBackgroundColor
+    ); // State for dynamic background
+    const [textColor, setTextColor] = useState(defaultTextColor); // State for dynamic text color
 
     useEffect(() => {
       if (isVisible) {
@@ -34,8 +38,14 @@ const Toast = React.forwardRef<ToastHandles, ToastProps>(
     }, [isVisible]);
 
     useImperativeHandle(ref, () => ({
-      showToast: (msg: string) => {
+      showToast: (
+        msg: string,
+        bg: string = defaultBackgroundColor,
+        text: string = defaultTextColor
+      ) => {
         setMessage(msg);
+        setBackgroundColor(bg); // Set the dynamic background color
+        setTextColor(text); // Set the dynamic text color
         setIsVisible(true);
       },
     }));
