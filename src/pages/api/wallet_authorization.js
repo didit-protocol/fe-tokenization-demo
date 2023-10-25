@@ -21,7 +21,7 @@ const handler = async (req, res) => {
 
     try {
       const wallet_authorization_response = await axios.post(
-        process.env.API_URL + "wallet_authorization/",
+        process.env.API_URL + "authorizations/v1/wallet-authorization/",
         data,
         { headers }
       );

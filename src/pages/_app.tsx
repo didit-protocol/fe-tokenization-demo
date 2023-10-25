@@ -19,16 +19,16 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <main>
       <div>
-        <ListingsProvider>
-          <TokenProvider>
-            <DynamicDiditProviderComponent>
+        <DynamicDiditProviderComponent>
+          <ListingsProvider>
+            <TokenProvider>
               <MainLayout>
                 <Component {...pageProps} />
                 <ToastContainer />
               </MainLayout>
-            </DynamicDiditProviderComponent>
-          </TokenProvider>
-        </ListingsProvider>
+            </TokenProvider>
+          </ListingsProvider>
+        </DynamicDiditProviderComponent>
       </div>
     </main>
   );

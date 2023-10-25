@@ -14,13 +14,13 @@ const handler = async (req, res) => {
 
     const data = {
       code: code,
-      grant_type: "https://gamium.world/oauth/grant_types/connectwallet",
+      grant_type: "connect_wallet",
       wallet_signature: wallet_signature,
     };
 
     try {
       const token_response = await axios.post(
-        process.env.API_URL + "token/",
+        process.env.API_URL + "authorizations/v1/token/",
         data,
         { headers }
       );
