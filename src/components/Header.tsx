@@ -27,10 +27,9 @@ const Header = () => {
     <header className="bg-white p-4 shadow-sm sticky top-0 z-50">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-3">
-          <Image src="/logo.png" alt="LIQUID Logo" width={40} height={40} />
           <Link href="/" passHref>
-             <span className="text-xl font-semibold text-gray-800 hover:text-gray-600 transition-colors cursor-pointer">
-              LIQUID
+            <span className="text-2xl md:text-2xl font-extrabold text-gray-800 hover:text-gray-600 transition-colors cursor-pointer">
+              LIQUID 💧
             </span>
           </Link>
         </div>
