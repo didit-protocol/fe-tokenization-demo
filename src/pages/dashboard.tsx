@@ -8,6 +8,7 @@ import ViewTransactionsModal from "@/components/ViewTransactionsModal";
 import SignInButton from "@/components/SignInButton";
 import { useDiditStatus } from "didit-sdk";
 import Link from "next/link";
+import Head from "next/head";
 
 const Dashboard = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -16,7 +17,7 @@ const Dashboard = () => {
 
   const handleButtonClick = (
     action: React.SetStateAction<string>,
-    listing: Listing
+    listing: Listing | null = null // Add a default value of null here
   ) => {
     setCurrentModal(action);
     setCurrentListing(listing);
@@ -48,6 +49,11 @@ const Dashboard = () => {
 
   return (
     <div className="p-5 min-h-screen">
+      <Head>
+        <title>Liquid - Dashboard</title>
+        <meta name="description" content="Dashboard page for Liquid" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <h1 className="text-2xl font-bold mb-6">Your Tokens</h1>
 
       {currentSales.length === 0 && tradeableTokens.length === 0 ? (
@@ -57,8 +63,14 @@ const Dashboard = () => {
             href="/listings"
             className="bg-green-600 text-white py-2 px-8 rounded hover:bg-green-700 transition duration-300"
           >
-            Browse Listings
+            Browse Listings!
           </Link>
+          <button
+            className="text-blue-500 hover:text-blue-600"
+            onClick={() => handleButtonClick("receive")} // Add this onClick handler
+          >
+            Receive Assets
+          </button>
         </div>
       ) : (
         <>
@@ -66,12 +78,13 @@ const Dashboard = () => {
           {currentSales.length > 0 && (
             <>
               <h2 className="text-xl font-medium mb-4">Current Sales</h2>
-              <div className="container mx-auto grid gap-4 mb-8">
+              <div className="container mx-auto grid mb-8">
                 {currentSales.map((listing) => (
                   <ListingCardDashboard
                     key={listing.contract_address}
                     listing={listing as Listing}
                     handleButtonClick={handleButtonClick}
+                    isSale={true}
                   />
                 ))}
               </div>
@@ -82,12 +95,13 @@ const Dashboard = () => {
           {tradeableTokens.length > 0 && (
             <>
               <h2 className="text-xl font-medium mb-4">Tradeable Tokens</h2>
-              <div className="container mx-auto grid gap-4">
+              <div className="container mx-auto grid">
                 {tradeableTokens.map((listing) => (
                   <ListingCardDashboard
                     key={listing.contract_address}
                     listing={listing as Listing}
                     handleButtonClick={handleButtonClick}
+                    isSale={false}
                   />
                 ))}
               </div>
@@ -98,7 +112,7 @@ const Dashboard = () => {
           {refundTokens.length > 0 && (
             <>
               <h2 className="text-xl font-medium mb-4">Refund Tokens</h2>
-              <div className="container mx-auto grid gap-4">
+              <div className="container mx-auto grid">
                 {refundTokens.map((listing) => (
                   <ListingCardDashboard
                     key={listing.contract_address}

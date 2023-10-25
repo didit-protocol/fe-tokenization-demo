@@ -3,6 +3,7 @@ import React, { FC } from "react";
 import Image from "next/image";
 import ProgressBar from "./ProgressBar";
 import StatusCard from "./StatusCard";
+import Link from "next/link";
 
 interface ListingProps {
   listing: any;
@@ -50,9 +51,11 @@ const ListingCardSale: FC<ListingProps> = ({ listing, showProgress }) => (
       <p>Mk Cap: ${listing.initial_value_per_token * listing.total_tokens}</p>
     </div>
 
-    <button className="mt-4 w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
-      View Details
-    </button>
+    <Link href={`/listings/${listing.contract_address}`} target="_blank">
+      <button className="mt-4 w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
+        View Details
+      </button>
+    </Link>
   </div>
 );
 
