@@ -3,29 +3,29 @@ import Image from "next/image";
 
 const Features = () => {
   return (
-    <div className="text-blue-900 w-full py-4 sm:py-8">
-      <div className="max-w-screen-xl mx-auto py-8 px-4 sm:px-6 lg:py-12 lg:px-8">
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-blue-900 mb-6 sm:mb-11">
+    <div className="bg-gray-50 text-blue-900 w-full py-12">
+      <div className="max-w-screen-xl mx-auto px-4 sm:p-6 lg:p-8">
+        <h2 className="text-3xl font-extrabold text-blue-900 mb-8 sm:mb-12">
           Our Features
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
           {renderFeature(
             "/image-features1.png",
             "Asset Liquidity",
-            "Have you ever thought about...",
-            " How hard it can be to quickly sell things like houses or artwork? This is because they areconsidered illiquid assets, meaning they cant be easily converted to cash. Now, imagine if we could split that house or artwork into smaller shares or pieces that people could buy or sell, just like stocks. That is the idea behind tokenization. By turning these assets into digital tokens , we can trade them easily online, making them more accessible for everyone to buy or sell ."
+            "Struggling to sell valuable items?",
+            "Tokenization lets you turn assets like art or real estate into digital tokens. Now, selling them becomes as easy as trading online stocks. Unlock quicker, simpler sales."
           )}
           {renderFeature(
             "/image-features5.png",
             "Fractional Ownership",
-            "Imagine splitting something big...",
-            "Like a painting, into smaller pieces and then selling each piece to different people. That is what tokenization does. It lets more people own a small piece of something expensive. This way, even if you dont have a lot of money, you can still invest in things that were once only for very rich people. It is like everyone chipping in to buy something together. Plus, owning a piece of many different things can be safer than putting all your money into just one thing."
+            "Wish to own a part of something costly?",
+            "Tokenization divides valuable items into affordable pieces. Buy a share of an artwork or property. It's like many people buying one item together."
           )}
           {renderFeature(
             "/image-features4.png",
             "Security and Immutability",
-            "Imagine a special kind of notebook...",
-            "That, once you write something in it, you cant erase or change it, and everyone can see what is written. That is how blockchain works. It safely keeps records of everything that happens. This makes it hard for people to cheat or lie because everyone can see the notebook. Plus, it is easier to check if something correct. This gives people confidence when they are trading or buying things using this system"
+            "Need trustworthy transactions?",
+            "Blockchain ensures unchangeable, transparent records. It's a system where everyone can verify details, making trading more secure."
           )}
         </div>
       </div>
@@ -39,19 +39,17 @@ const renderFeature = (
   description: string,
   extraDescription?: string
 ) => (
-  <div className="flex flex-col items-center">
+  <div className="flex flex-col items-center border-2 border-blue-200 rounded-lg p-6 shadow-lg">
     <Image
       src={src}
       alt={title}
       width={250}
       height={250}
-      className="rounded-full shadow-lg border-2 border-blue-700 sm:w-full sm:mx-auto"
+      className="rounded-full shadow-lg border-2 border-blue-700 mb-4"
     />
-    <h3 className="text-xl sm:text-2xl mb-3 mt-4">{title}</h3>
-    <p className="text-lg sm:text-xl mt-2">{description}</p>
-    {extraDescription && (
-      <p className="hidden md:block mt-2 text-lg">{extraDescription}</p>
-    )}
+    <h3 className="text-2xl mb-3 text-black">{title}</h3>
+    <p className="text-lg mt-2 text-black">{description}</p>
+    {extraDescription && <p className="mt-4 text-md">{extraDescription}</p>}
   </div>
 );
 

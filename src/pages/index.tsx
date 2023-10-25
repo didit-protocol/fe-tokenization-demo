@@ -11,16 +11,21 @@ import AdditionalInformation3 from "../components/AdditionalDescription3";
 const LandingPage = () => {
   return (
     <>
-    <div className=" h-screen flex flex-col items-center md:justify-between">
-      <Popup />{/* check done */}
-      <MainContent />{/* check done */}
-      <AdditionalInformation1/> {/* check done */}
-      <Form/>{/* check done */}
-      <Features/>{/* check done */}
-      <AdditionalInformation3/>{/* check done */}
-      <ClientReview /> {/* check done */}
-      <Footer /> {/* check done */}
-    </div>
+      <div className="h-screen flex flex-col items-center md:justify-between bg-gray-50">
+        <Popup />
+        {/* check done */}
+        <MainContent />
+        {/* check done */}
+        <AdditionalInformation1 /> {/* check done */}
+        <Form />
+        {/* check done */}
+        <Features />
+        {/* check done */}
+        <AdditionalInformation3 />
+        {/* check done */}
+        <ClientReview /> {/* check done */}
+        <Footer /> {/* check done */}
+      </div>
     </>
   );
 };
