@@ -1,4 +1,3 @@
-// components/ListingCard.tsx
 import React, { FC } from "react";
 import Image from "next/image";
 import ProgressBar from "./ProgressBar";
@@ -13,7 +12,7 @@ interface ListingProps {
 const ListingCardSale: FC<ListingProps> = ({ listing, showProgress }) => (
   <div
     key={listing.contract_address}
-    className="bg-white p-6 rounded-xl shadow-lg transition-transform transform hover:scale-105 relative"
+    className="bg-white p-6 rounded-xl shadow-lg transition-transform transform hover:scale-105 relative flex flex-col"
   >
     <StatusCard status={listing.status} absolute={true} />
 
@@ -27,7 +26,9 @@ const ListingCardSale: FC<ListingProps> = ({ listing, showProgress }) => (
     </div>
 
     <h2 className="text-2xl font-bold mb-2 truncate">{listing.name}</h2>
-    <p className="text-gray-600 mb-4 line-clamp-3">{listing.description}</p>
+    <p className="text-gray-600 mb-4 line-clamp-3 flex-grow">
+      {listing.description}
+    </p>
 
     <div className="flex justify-between items-center mb-4">
       <div className="text-sm text-gray-700">
@@ -47,8 +48,18 @@ const ListingCardSale: FC<ListingProps> = ({ listing, showProgress }) => (
       />
     ) : null}
     <div className="text-sm text-gray-700">
-      <p>Price: ${listing.initial_value_per_token}</p>
-      <p>Mk Cap: ${listing.initial_value_per_token * listing.total_tokens}</p>
+      <p>
+        Price: $
+        {Number(listing.initial_value_per_token).toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+        })}
+      </p>
+      <p>
+        Mk Cap: $
+        {Number(
+          listing.initial_value_per_token * listing.total_tokens
+        ).toLocaleString("en-US", { minimumFractionDigits: 0 })}
+      </p>
     </div>
 
     <Link href={`/listings/${listing.contract_address}`} target="_blank">

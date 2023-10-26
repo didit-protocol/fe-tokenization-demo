@@ -59,7 +59,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
         </div>
 
         {/* Second row of buttons for mobile */}
-        <div className="flex space-x-2">
+        {/* <div className="flex space-x-2">
           <button
             onClick={() => handleButtonClick("forceTransfer", listing)}
             className="text-xs bg-gray-300 p-2 rounded-lg hover:bg-gray-400 transition-colors w-24"
@@ -78,7 +78,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
           >
             Unfreeze
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

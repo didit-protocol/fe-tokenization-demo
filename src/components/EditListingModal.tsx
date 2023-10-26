@@ -5,11 +5,13 @@ import { Listing } from "@/utils/listing";
 import { toast } from "react-toastify";
 import { useToken } from "@/contexts/TokenProvider";
 import { editListing, deleteListing } from "@/services/listingService";
+import InputAddress from "./InputAddress";
 
 interface CreateListingModalProps {
   isOpen: boolean;
   onClose: () => void;
   listing: Listing | null;
+  onSuccess?: () => void;
 }
 
 const isFile = (image: string | File): image is File => {
@@ -20,6 +22,7 @@ const EditListingModal = ({
   isOpen,
   onClose,
   listing,
+  onSuccess,
 }: CreateListingModalProps) => {
   const { internalToken } = useToken();
 
@@ -27,7 +30,7 @@ const EditListingModal = ({
     contract_address: listing?.contract_address || "",
     name: listing?.name || "",
     description: listing?.description || "",
-    portrait_image: listing?.portrait_image || "",
+    portrait_image: listing?.portrait_image || null,
     markdown: listing?.markdown || "",
     images: listing?.images || [],
     total_tokens: listing?.total_tokens || 0,
@@ -35,7 +38,7 @@ const EditListingModal = ({
     initial_value_per_token: listing?.initial_value_per_token || 0,
     end_time_sale: listing?.end_time_sale || 0,
     tokens_sold: listing?.tokens_sold || 0,
-    status: listing?.status || "Sale",
+    status: listing?.status || "S",
   });
 
   const renderImage = (image: string | File) => {
@@ -80,9 +83,9 @@ const EditListingModal = ({
         listingData
       );
 
-      if (response && response.status == 200) {
+      if (response && response.contract_address) {
         toast.success("Listing edited successfully");
-        onClose();
+        onSuccess && onSuccess();
       } else {
         toast.error("Editing listing failed");
       }
@@ -92,18 +95,17 @@ const EditListingModal = ({
   };
 
   const handleDeleteListing = async () => {
-    if (!window.confirm("Are you sure you want to delete this listing?"))
-      return; // Confirmation before deleting
-
     try {
-      const response = await deleteListing(
+      const status = await deleteListing(
         internalToken as string,
         listingData.contract_address
       );
 
-      if (response && response.status == 200) {
+      console.log(status);
+
+      if ((status && status === 200) || status === 204) {
         toast.success("Listing deleted successfully");
-        onClose();
+        onSuccess && onSuccess();
       } else {
         toast.error("Deleting listing failed");
       }
@@ -202,30 +204,45 @@ const EditListingModal = ({
 
           <div className="flex mt-4">
             {listingData.images &&
-              listingData.images.map((image, index) => (
-                <div key={index} className="relative w-24 h-24 rounded mr-4">
-                  <Image
-                    src={renderImage(image)}
-                    alt="Uploaded Image"
-                    width={96}
-                    height={96}
-                    className="rounded"
-                  />
-                  <button
-                    className="absolute top-0 right-0 bg-red-600 text-white rounded-fullw-6 h-6 flex items-center justify-center"
-                    onClick={() => {
-                      const updatedImages = [...(listingData.images as File[])]; // Handle null with a fallback value of []
-                      updatedImages.splice(index, 1);
-                      setListingData((prev) => ({
-                        ...prev,
-                        images: updatedImages,
-                      }));
-                    }}
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
+              listingData.images.map((imageObj, index) => {
+                let imageSrc: string;
+                if ("image" in imageObj) {
+                  imageSrc = renderImage(imageObj.image);
+                } else if (imageObj instanceof File) {
+                  // If imageObj is of File type, you might want to convert it to a data URL or handle differently
+                  // For the sake of this example, I'll use a placeholder.
+                  imageSrc = URL.createObjectURL(imageObj);
+                } else {
+                  return null; // Or handle other unexpected cases
+                }
+
+                return (
+                  <div key={index} className="relative w-24 h-24 rounded mr-4">
+                    <Image
+                      src={imageSrc}
+                      alt="Uploaded Image"
+                      width={96}
+                      height={96}
+                      className="rounded"
+                    />
+                    <button
+                      className="absolute top-0 right-0 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                      onClick={() => {
+                        const updatedImages = [
+                          ...(listingData.images as File[]),
+                        ];
+                        updatedImages.splice(index, 1);
+                        setListingData((prev) => ({
+                          ...prev,
+                          images: updatedImages,
+                        }));
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                );
+              })}
           </div>
         </div>
 
@@ -234,12 +251,25 @@ const EditListingModal = ({
             Markdown <span className="text-red-500">*</span>
           </label>
           <textarea
-            maxLength={500} // Add char limit
+            maxLength={5000} // Add char limit
             className="border w-full p-2 rounded resize-y shadow-sm"
             rows={3}
             placeholder="Enter Markdown (Max 500 chars)"
             value={listingData.markdown}
             onChange={(e) => handleInputChange("markdown", e.target.value)}
+          />
+        </div>
+
+        <div className="w-full px-2 mb-4">
+          <label className="block text-gray-600 mb-2">
+            Contract Address <span className="text-red-500">*</span>
+          </label>
+          <InputAddress
+            value={listingData.contract_address}
+            onChange={(val) =>
+              setListingData({ ...listingData, contract_address: val })
+            }
+            placeholder="0x... (Ethereum Contract Address)"
           />
         </div>
 
@@ -254,25 +284,28 @@ const EditListingModal = ({
               value={listingData.status}
               onChange={(e) => handleInputChange("status", e.target.value)}
             >
-              <option value="Sale">Sale</option>
-              <option value="Tradeable">Tradeable</option>
-              <option value="Refund">Refund</option>
+              <option value="S">Sale</option>
+              <option value="T">Tradeable</option>
+              <option value="R">Refund</option>
             </select>
           </div>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 flex justify-between space-x-4">
+          {/* Edit Listing Button */}
           <button
-            className="w-full bg-blue-500 text-white py-3 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="flex-grow bg-blue-500 text-white py-3 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             onClick={handleEditListing}
           >
-            Edit Listing
+            <span>Edit Listing</span>
           </button>
+
+          {/* Delete Listing Button */}
           <button
-            className="w-full bg-red-500 text-white py-3 rounded-lg shadow-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            className="bg-red-500 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
             onClick={handleDeleteListing}
           >
-            Delete Listing
+            Delete
           </button>
         </div>
       </div>

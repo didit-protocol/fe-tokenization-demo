@@ -28,7 +28,7 @@ const FreezeUnfreezeModal = ({
       onClose={onClose}
       title={action === "freeze" ? "Freeze Asset" : "Unfreeze Asset"}
     >
-      <div className="p-4 bg-white rounded-md shadow-lg space-y-4 flex flex-col">
+      <div className="p-2 bg-white rounded-md shadow-lg space-y-4 flex flex-col">
         <div className="border-b pb-2">
           <ListingCardModal listing={listing} />
         </div>

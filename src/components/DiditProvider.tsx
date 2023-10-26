@@ -5,6 +5,7 @@ import { DiditProvider } from "didit-provider";
 
 import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { mainnet, polygon, optimism, arbitrum, goerli } from "wagmi/chains";
+import { apothem } from "@/utils/customChain";
 import { publicProvider } from "wagmi/providers/public";
 
 import "didit-sdk/styles.css";
@@ -13,8 +14,10 @@ import "didit-sdk/styles.css";
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || "";
 
 const { chains, provider, webSocketProvider } = configureChains(
-  [mainnet, polygon, optimism, arbitrum, goerli],
-  [publicProvider()]
+  //[mainnet, polygon, optimism, arbitrum, goerli],
+  [apothem],
+  [publicProvider()],
+  { pollingInterval: 10_000 }
 );
 
 const { connectors } = getDefaultWallets({

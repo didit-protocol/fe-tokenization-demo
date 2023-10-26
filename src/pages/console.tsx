@@ -18,14 +18,14 @@ const Console = () => {
   const contextValue = useListings();
   const getListings = contextValue?.getListings;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (getListings) {
-        const fetchedListings = await getListings();
-        setListings(fetchedListings);
-      }
-    };
+  const fetchData = async () => {
+    if (getListings) {
+      const fetchedListings = await getListings();
+      setListings(fetchedListings);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, [getListings]);
 
@@ -50,6 +50,10 @@ const Console = () => {
           <div className="text-xl md:text-2xl font-semibold mb-3 md:mb-0">
             Management Console
           </div>
+          <span className="text-gray-600 text-sm mb-4">
+            Note: You can create and edit listings only with an admin wallet
+            address.
+          </span>
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white font-medium md:font-semibold py-2 px-4 rounded-xl shadow"
             onClick={() => handleButtonClick("createListing")}
@@ -93,6 +97,10 @@ const Console = () => {
         <CreateListingModal
           isOpen={showModal && currentModal === "createListing"}
           onClose={() => setShowModal(false)}
+          onSuccess={() => {
+            fetchData();
+            setShowModal(false);
+          }}
         />
       )}
 
@@ -101,6 +109,10 @@ const Console = () => {
           isOpen={showModal && currentModal === "editListing"}
           onClose={() => setShowModal(false)}
           listing={currentListing}
+          onSuccess={() => {
+            fetchData();
+            setShowModal(false);
+          }}
         />
       )}
     </div>

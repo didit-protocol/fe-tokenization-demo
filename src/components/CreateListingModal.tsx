@@ -10,26 +10,39 @@ import { Listing } from "@/utils/listing";
 interface CreateListingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
+const CreateListingModal = ({
+  isOpen,
+  onClose,
+  onSuccess,
+}: CreateListingModalProps) => {
   const { internalToken } = useToken();
 
   const handleCreateListing = async () => {
     try {
+      // Convert end_time_sale to a Unix timestamp
+      const timestamp = new Date(listingData.end_time_sale).getTime() / 1000;
+
+      const dataToSend = {
+        ...listingData,
+        end_time_sale: timestamp,
+      };
+
       // Assuming you have access_token in some state or from context
       const response = await createListing(
         internalToken as string,
-        listingData,
+        dataToSend,
         {
           portrait: listingData.portrait_image as File,
           images: listingData.images as File[],
         }
       );
 
-      if (response && response.status == 200) {
+      if (response && response.uuid) {
         toast.success("Listing created successfully");
-        onClose(); // Close modal after successful creation
+        onSuccess && onSuccess();
       } else {
         toast.error("Listing creation failed");
       }
@@ -50,7 +63,7 @@ const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
     initial_value_per_token: 0,
     end_time_sale: 1698253385,
     tokens_sold: 0,
-    status: "Sale",
+    status: "S",
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -247,7 +260,7 @@ const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
               </label>
               <input
                 className="border w-full p-2 rounded shadow-sm"
-                type="text"
+                type="number" // Using number input for tokens
                 placeholder="Enter Initial Sale Tokens"
                 value={listingData.initial_sale_tokens}
                 onChange={(e) =>
@@ -256,8 +269,24 @@ const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
               />
             </div>
 
+            {/* Initial Value Per Token Input */}
+            <div>
+              <label className="block text-gray-600 mb-2">
+                Initial Value Per Token
+              </label>
+              <input
+                className="border w-full p-2 rounded shadow-sm"
+                type="number" // Using number input for value
+                placeholder="Enter Initial Value Per Token"
+                value={listingData.initial_value_per_token}
+                onChange={(e) =>
+                  handleInputChange("initial_value_per_token", e.target.value)
+                }
+              />
+            </div>
+
             {/* Conditional End Time Sale Input */}
-            {listingData.status === "Sale" && (
+            {listingData.status === "S" && (
               <div className="col-span-full md:col-span-1">
                 <label className="block text-gray-600 mb-2">
                   End Time Sale <span className="text-red-500">*</span>
@@ -284,9 +313,9 @@ const CreateListingModal = ({ isOpen, onClose }: CreateListingModalProps) => {
               value={listingData.status}
               onChange={(e) => handleInputChange("status", e.target.value)}
             >
-              <option value="Sale">Sale</option>
-              <option value="Tradeable">Tradeable</option>
-              <option value="Refund">Refund</option>
+              <option value="S">Sale</option>
+              <option value="T">Tradeable</option>
+              <option value="R">Refund</option>
             </select>
           </div>
         </div>

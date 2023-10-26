@@ -3,7 +3,6 @@
 import Head from "next/head";
 import { useState, useEffect, FC } from "react";
 import ListingCardSale from "../components/ListingCardSale";
-import { mockedListings } from "@/utils/mockedData";
 import { Listing } from "@/utils/listing";
 import { useListings } from "@/contexts/ListingProvider";
 
@@ -11,12 +10,6 @@ const Listings: FC = () => {
   const [listings, setListings] = useState<Listing[]>([]);
   const contextValue = useListings();
   const getListings = contextValue?.getListings;
-
-  // useEffect(() => {
-  //   // Mock data fetching (replace with your API call)
-  //   const mockedData = mockedListings;
-  //   setListings(mockedListings as []);
-  // }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,8 +21,6 @@ const Listings: FC = () => {
 
     fetchData();
   }, [getListings]);
-
-  console.log(listings);
 
   return (
     <div className="py-6 sm:py-12 min-h-screen">
@@ -44,7 +35,7 @@ const Listings: FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {listings.map(
             (listing) =>
-              listing.status === "Sale" && (
+              listing.status === "S" && (
                 <ListingCardSale
                   key={listing.contract_address}
                   listing={listing}
@@ -58,7 +49,7 @@ const Listings: FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {listings.map(
             (listing) =>
-              listing.status === "Tradeable" && (
+              listing.status === "T" && (
                 <ListingCardSale
                   key={listing.contract_address}
                   listing={listing}

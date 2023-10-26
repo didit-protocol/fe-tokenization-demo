@@ -13,11 +13,21 @@ const ListingDetail: React.FC<ListingDetailProps> = ({ listing }) => {
   const { isFallback } = useRouter(); // You need to import 'useRouter' from 'next/router'
 
   if (isFallback) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center p-10 space-y-4">
+        <p className="text-xl font-medium text-gray-700">Loading ...</p>
+      </div>
+    );
   }
 
   if (!listing) {
-    return <div>No listing found for this address.</div>;
+    return (
+      <div className="flex flex-col items-center justify-center p-10 space-y-4">
+        <p className="text-xl font-medium text-gray-700">
+          No Listing found for this token address
+        </p>
+      </div>
+    );
   }
 
   return <ListingsDetails listing={listing} />;
@@ -26,32 +36,33 @@ const ListingDetail: React.FC<ListingDetailProps> = ({ listing }) => {
 // This function gets the paths that should be pre-rendered.
 export const getStaticPaths: GetStaticPaths = async () => {
   // Fetch all listings to generate paths
-  const listings = await getListings(); // Assuming `getListings` is available and fetches all listings
+  const listings = await getListings();
 
+  console.log("listings", listings);
   // Generate paths from fetched listings
   const paths = listings.map((listing) => ({
     params: { contract_address: listing.contract_address },
   }));
 
+  console.log("paths", paths);
+
   return {
     paths,
-    fallback: true, // This allows for on-the-fly rendering for paths not generated at build time
+    fallback: true,
   };
 };
 
 // This function fetches the data for each pre-rendered path.
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  console.log("params", params);
-  const contract_address = params?.contract_address;
+  // 1. Fetch all listings
+  const allListings = await getListings();
 
-  console.log("contract_address", contract_address);
+  // 2. Filter to get the specific listing based on contract_address
+  const listing = allListings.find(
+    (listing) => listing.contract_address === params?.contract_address
+  );
 
-  const listing = await getListing(contract_address as string);
-
-  // const listing = mockedListings.find(
-  //   (listing) => listing.contract_address === contract_address
-  // );
-
+  // 3. Return the filtered listing as a prop
   return {
     props: {
       listing,

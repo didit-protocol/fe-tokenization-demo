@@ -37,7 +37,6 @@ export const getListing = async (
       headers: header,
     });
 
-    console.log("response", response);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -54,7 +53,7 @@ export const createListing = async (
   data: Listing,
   files: { portrait: File; images: File[] }
 ): Promise<any> => {
-  const endpoint = `${TOKENIZATION_BASE_URL}/platform/listings/`;
+  const endpoint = `${TOKENIZATION_BASE_URL}/platform/listings/create/`;
   const headers = {
     Authorization: `Bearer ${accessToken}`,
   };
@@ -104,6 +103,15 @@ export const editListing = async (
     "Content-Type": "application/json",
   };
 
+  // Remove images and portrait_image as their editing is not implemented yet
+  if (data.images) {
+    (data as any).images = undefined;
+  }
+
+  if (data.portrait_image) {
+    (data as any).portrait_image = undefined;
+  }
+
   try {
     const response = await fetch(endpoint, {
       method: "PATCH",
@@ -126,7 +134,7 @@ export const editListing = async (
 export const deleteListing = async (
   accessToken: string,
   contractAddress: string
-): Promise<any> => {
+): Promise<number | null> => {
   const endpoint = `${TOKENIZATION_BASE_URL}/platform/listings/${contractAddress}/`;
   const headers = {
     Authorization: `Bearer ${accessToken}`,
@@ -141,9 +149,7 @@ export const deleteListing = async (
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
-    const responseData: Listing = await response.json();
-    return responseData;
+    return response.status;
   } catch (error) {
     console.error("Error deleting listing:", error);
     return null;

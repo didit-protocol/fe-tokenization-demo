@@ -6,7 +6,7 @@ import React, {
   ReactNode,
 } from "react";
 import { exchangeToken } from "@/services/tokenService";
-import { useDiditStatus } from "didit-sdk";
+import { useDiditStatus, useAuthenticationAdapter } from "didit-sdk";
 
 type TokenContextType = {
   internalToken: string | null;
@@ -31,10 +31,16 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
   const [internalToken, setInternalToken] = useState<string | null>(null);
 
   const { status, token } = useDiditStatus();
+  const { signOut } = useAuthenticationAdapter();
 
   const getToken = async (): Promise<string | null> => {
     if (token && status === "authenticated") {
-      return await exchangeToken(token as string);
+      const newToken = await exchangeToken(token as string);
+      if (newToken) {
+        return newToken;
+      } else {
+        signOut();
+      }
     }
     return null;
   };

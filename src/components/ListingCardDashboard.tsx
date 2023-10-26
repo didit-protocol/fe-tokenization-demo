@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import StatusCard from "@/components/StatusCard";
 import { Listing } from "@/utils/listing";
 import { truncateAddress } from "@/utils/text";
 import Link from "next/link";
+import { getERC20Balance } from "@/services/balances";
 
 interface DetailedListingCardProps {
   listing: Listing;
@@ -19,6 +20,25 @@ const ListingCardDashboard: React.FC<DetailedListingCardProps> = ({
   handleButtonClick,
   isSale = false,
 }) => {
+  const [balance, setBalance] = useState<string>("Loading...");
+
+  useEffect(() => {
+    async function fetchBalance() {
+      try {
+        const tokenBalance = await getERC20Balance(listing.contract_address);
+        setBalance(tokenBalance);
+      } catch (error) {
+        setBalance("Error fetching balance");
+      }
+    }
+    fetchBalance();
+  }, [listing.contract_address]);
+
+  // if balance is 0 then return null
+  if (balance === "0.0") {
+    return null;
+  }
+
   return (
     <div
       key={listing.contract_address}
@@ -45,7 +65,9 @@ const ListingCardDashboard: React.FC<DetailedListingCardProps> = ({
 
         {/* Balance display, assuming balance is part of the listing object */}
         <div className="mt-2">
-          <span className="font-medium text-sm md:text-sm">Balance: 231 </span>
+          <span className="font-medium text-sm md:text-sm">
+            Balance: {balance}{" "}
+          </span>
         </div>
       </div>
 
@@ -71,12 +93,12 @@ const ListingCardDashboard: React.FC<DetailedListingCardProps> = ({
             >
               Send
             </button>
-            <button
+            {/* <button
               onClick={() => handleButtonClick("viewTransactions", listing)}
               className="text-xs bg-gray-300 p-2 rounded-lg hover:bg-gray-400 transition-colors w-full md:w-40"
             >
               Transactions
-            </button>
+            </button> */}
           </div>
         )}
       </div>

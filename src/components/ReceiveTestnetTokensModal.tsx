@@ -4,6 +4,7 @@ import Modal from "./Modal";
 import { useDiditStatus } from "didit-sdk";
 import ListingCardModal from "./ListingCardModal";
 import Toast, { ToastHandles } from "./Toast";
+import Link from "next/link";
 
 interface ReceiveModalProps {
   isOpen: boolean;
@@ -11,25 +12,38 @@ interface ReceiveModalProps {
   listing: any;
 }
 
-const ReceiveModal = ({ isOpen, onClose, listing }: ReceiveModalProps) => {
+const ReceiveTestnetTokensModal = ({
+  isOpen,
+  onClose,
+  listing,
+}: ReceiveModalProps) => {
   const { address } = useDiditStatus();
 
   const toastRef = useRef<ToastHandles>(null);
 
   const handleCopyToClipboard = () => {
-    navigator.clipboard.writeText(address || "");
+    navigator.clipboard.writeText(address ? "xdc" + address?.substring(2) : "");
     toastRef.current?.showToast("Copied to clipboard");
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Receive Asset">
+    <Modal isOpen={isOpen} onClose={onClose} title="Get free TXDC">
       <div className="flex flex-col space-y-4">
         {listing && (
           <div className="flex items-center justify-between border-b pb-2">
             <ListingCardModal listing={listing} />
           </div>
         )}
-        <p>Receive Assets by sending this address to the Sender.</p>
+        <p>
+          Claim Free Tokens to be able to buy Assets. Copy and paste the below
+          address at{" "}
+          <span className="text-blue-500">
+            <Link href="https://faucet.apothem.network/" target="_blank">
+              this link
+            </Link>
+          </span>{" "}
+          to get free TXDC.
+        </p>
         <input
           className="border p-2 rounded bg-gray-200 cursor-not-allowed"
           type="text"
@@ -54,4 +68,4 @@ const ReceiveModal = ({ isOpen, onClose, listing }: ReceiveModalProps) => {
   );
 };
 
-export default ReceiveModal;
+export default ReceiveTestnetTokensModal;

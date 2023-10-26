@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import ListingCardDashboard from "@/components/ListingCardDashboard";
-import { mockedListings } from "@/utils/mockedData";
 import { Listing } from "@/utils/listing";
 import TransferModal from "@/components/TransferModal";
 import ReceiveModal from "@/components/ReceiveModal";
@@ -10,12 +9,18 @@ import { useDiditStatus } from "didit-sdk";
 import { useListings } from "@/contexts/ListingProvider";
 import Link from "next/link";
 import Head from "next/head";
+import ReceiveTestnetTokensModal from "@/components/ReceiveTestnetTokensModal";
+import getBalance from "@/services/balances";
+import { TokenToUSD } from "@/utils/text";
 
 const Dashboard = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [currentModal, setCurrentModal] = useState<string>("");
   const [currentListing, setCurrentListing] = useState<Listing | null>(null);
   const [listings, setListings] = useState<Listing[]>([]);
+
+  // to remove
+  const [txdcBalance, setTxdcBalance] = useState<string>("0");
 
   const handleButtonClick = (
     action: React.SetStateAction<string>,
@@ -37,17 +42,25 @@ const Dashboard = () => {
     };
 
     fetchData();
+
+    // 3. Fetch TXDC balance
+    const fetchBalance = async () => {
+      try {
+        const balance = await getBalance();
+        setTxdcBalance(balance);
+      } catch (error) {
+        console.error("Failed to fetch balance:", error);
+      }
+    };
+
+    fetchBalance();
   }, [getListings]);
 
   const { status, address } = useDiditStatus();
 
-  const currentSales = listings.filter((listing) => listing.status === "Sale");
-  const tradeableTokens = listings.filter(
-    (listing) => listing.status === "Tradeable"
-  );
-  const refundTokens = listings.filter(
-    (listing) => listing.status === "Refund"
-  );
+  const currentSales = listings.filter((listing) => listing.status === "S");
+  const tradeableTokens = listings.filter((listing) => listing.status === "T");
+  const refundTokens = listings.filter((listing) => listing.status === "R");
 
   if (status !== "authenticated") {
     return (
@@ -86,6 +99,25 @@ const Dashboard = () => {
         </div>
       ) : (
         <>
+          <div className="container mx-auto grid mb-8 align-right justify-end">
+            <button
+              className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition duration-300"
+              onClick={() => handleButtonClick("receiveTestnetTokens")}
+            >
+              Receive free TXDC
+            </button>
+            <span className="text-gray-500 text-sm ml-4 mt-2">
+              Balance:{" "}
+              {Number(txdcBalance).toLocaleString("en-US", {
+                minimumFractionDigits: 0,
+              })}{" "}
+              TXDC ( $
+              {Number(TokenToUSD(Number(txdcBalance))).toLocaleString("en-US", {
+                minimumFractionDigits: 0,
+              })}{" "}
+              )
+            </span>
+          </div>
           {/* Current Sales section */}
           {currentSales.length > 0 && (
             <>
@@ -137,6 +169,12 @@ const Dashboard = () => {
           )}
         </>
       )}
+
+      <ReceiveTestnetTokensModal
+        isOpen={showModal && currentModal === "receiveTestnetTokens"}
+        onClose={() => setShowModal(false)}
+        listing={currentListing}
+      />
 
       <TransferModal
         isOpen={showModal && currentModal === "send"}

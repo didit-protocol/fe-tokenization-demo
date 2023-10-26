@@ -25,7 +25,7 @@ const TransferModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Transfer Asset">
-      <div className="p-4 bg-white rounded-md shadow-lg space-y-4">
+      <div className="p-2 bg-white rounded-md shadow-lg space-y-4">
         <div className="flex items-center justify-between border-b pb-2">
           <ListingCardModal listing={listing} />
         </div>

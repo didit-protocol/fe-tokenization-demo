@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import StatusCard from "@/components/StatusCard";
 import { Listing } from "@/utils/listing";
+import { truncateAddress } from "@/utils/text";
 
 interface ListingCardProps {
   listing: Listing;
@@ -25,7 +26,9 @@ const ListingCardModal: React.FC<ListingCardProps> = ({ listing }) => {
 
       <div className="flex-grow">
         <h2 className="text-lg font-medium truncate">{listing.name}</h2>
-        <p className="text-xs text-gray-600">{listing.contract_address}</p>
+        <p className="text-xs text-gray-600">
+          {truncateAddress(listing.contract_address)}
+        </p>
         <StatusCard status={listing.status} />
       </div>
 
