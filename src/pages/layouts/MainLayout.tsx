@@ -1,7 +1,7 @@
 // src/layouts/MainLayout.tsx
 import React from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 type MainLayoutProps = {
   children: React.ReactNode;
@@ -12,7 +12,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow">{children}</main>
-      <Footer />
+{/*       <Footer /> */}
     </div>
   );
 };
