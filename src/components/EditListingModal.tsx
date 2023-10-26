@@ -101,8 +101,6 @@ const EditListingModal = ({
         listingData.contract_address
       );
 
-      console.log(status);
-
       if ((status && status === 200) || status === 204) {
         toast.success("Listing deleted successfully");
         onSuccess && onSuccess();

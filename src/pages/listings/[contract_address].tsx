@@ -37,14 +37,10 @@ const ListingDetail: React.FC<ListingDetailProps> = ({ listing }) => {
 export const getStaticPaths: GetStaticPaths = async () => {
   // Fetch all listings to generate paths
   const listings = await getListings();
-
-  console.log("listings", listings);
   // Generate paths from fetched listings
   const paths = listings.map((listing) => ({
     params: { contract_address: listing.contract_address },
   }));
-
-  console.log("paths", paths);
 
   return {
     paths,

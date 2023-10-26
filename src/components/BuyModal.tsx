@@ -35,16 +35,11 @@ const BuyModal = ({ isOpen, onClose, listing }: ReceiveModalProps) => {
       // Choose the appropriate ABI based on tokensToBuy
       const chosenABI = tokensToBuy > 0 ? ERC20_ABI_PAYABLE : ERC20_ABI;
 
-      console.log("chosenABI", chosenABI);
-      console.log("totalValue", totalValue);
-
       const contract = new ethers.Contract(
         listing.contract_address,
         chosenABI,
         signer
       );
-
-      console.log("contract", contract);
 
       // Convert tokens to buy into the appropriate unit (assuming 18 decimals for the token)
       const amount = ethers.utils
@@ -56,7 +51,6 @@ const BuyModal = ({ isOpen, onClose, listing }: ReceiveModalProps) => {
       // If tokensToBuy > 0, send the value with the mint transaction
       if (tokensToBuy > 0) {
         const intTo = parseInt(totalValue).toString();
-        console.log("intTo", intTo);
         let valueToSend = ethers.utils
           .parseEther(parseInt(totalValue).toString())
           .toHexString();
